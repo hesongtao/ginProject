@@ -1,0 +1,32 @@
+package main
+
+import (
+	"fmt"
+	"ginProject/config"
+	router2 "ginProject/router"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+)
+
+type Product struct {
+	ID   int
+	Name string
+}
+
+func main() {
+	router := router2.InitRouter()
+
+	Db, err := gorm.Open(mysql.Open(config.Mysqldb), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	// Read
+	var product Product
+	Db.Create(&Product{ID: 3, Name: "lisi"})
+	Db.First(&product, 1) // 根据整型主键查找
+	fmt.Println(product)
+
+	if err := router.Run(":8081"); err != nil {
+		panic(err)
+	}
+}
